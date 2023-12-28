@@ -8,6 +8,10 @@
         exit();
     }
     
+    // Untuk save loaded game
+    $overrideGame = $_POST["overridegame"];
+    $savedgameid = $_POST["savedgameid"];
+
     $username = $_POST["username"];
     $fen = $_POST["fen"]; 
     $gamemode = $_POST["gamemode"];
@@ -22,8 +26,14 @@
     if (mysqli_num_rows($namecheck) == 1){
         $row = mysqli_fetch_assoc($namecheck);
         $userid = $row["userID"];
-        $insertsavedgamequery = "INSERT INTO savedgames (userID, FEN, gameMode, vsAI, difficultyAI, isWhite) VALUES ('" . $userid . "', '" . $fen . "', '" . $gamemode . "', '" . $vsai . "', '" . $difficultyai . "', '" . $iswhite . "');";
-        mysqli_query($con,$insertsavedgamequery) or die(mysqli_error($con));
+        if ($overrideGame == "TRUE"){
+            $overridesavedgamequery = "UPDATE savedgames SET FEN = '$fen', gameMode = '$gamemode', vsAI = '$vsai', difficultyAI = '$difficultyai', isWhite = '$iswhite' WHERE userID = $userid AND savedGameID = $savedgameid;";
+            mysqli_query($con,$overridesavedgamequery) or die(mysqli_error($con));
+        }
+        else{
+            $insertsavedgamequery = "INSERT INTO savedgames (userID, FEN, gameMode, vsAI, difficultyAI, isWhite) VALUES ('" . $userid . "', '" . $fen . "', '" . $gamemode . "', '" . $vsai . "', '" . $difficultyai . "', '" . $iswhite . "');";
+            mysqli_query($con,$insertsavedgamequery) or die(mysqli_error($con));
+        }
     }
     elseif (mysqli_num_rows($namecheck) > 1){
         echo "Error, duplicate userID!!!";

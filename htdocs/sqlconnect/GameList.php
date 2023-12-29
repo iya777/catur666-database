@@ -20,13 +20,13 @@
     if (mysqli_num_rows($namecheck) == 1){
         $infonamecheck = mysqli_fetch_assoc($namecheck);
 
-        $idcheckquery = "SELECT savedGameID, FEN, gameMode, vsAI, difficultyAI, isWhite, lastModified FROM savedgames WHERE userID='" . $infonamecheck['userID'] . "' LIMIT " . $offset . ", " . $limit . ";";
+        $idcheckquery = "SELECT savedGameID, FEN, gameMode, vsAI, difficultyAI, isWhite, lastModified, white_time, black_time FROM savedgames WHERE userID='" . $infonamecheck['userID'] . "' LIMIT " . $offset . ", " . $limit . ";";
         $idcheck = mysqli_query($con,$idcheckquery) or die(mysqli_error($con)); // Error code 2 = name check query failed
 
         if ($idcheck){
             $numRows = mysqli_num_rows($idcheck);
             while ($info = mysqli_fetch_assoc($idcheck)){
-                echo("0\t" . $info["savedGameID"] . "\t" . $info["FEN"] . "\t" . $info["gameMode"] . "\t" . $info["vsAI"] . "\t" . $info["difficultyAI"] . "\t" . $info["isWhite"] . "\t" . $info["lastModified"] . "\t" . $numRows . "\n");
+                echo("0\t" . $info["savedGameID"] . "\t" . $info["FEN"] . "\t" . $info["gameMode"] . "\t" . $info["vsAI"] . "\t" . $info["difficultyAI"] . "\t" . $info["isWhite"] . "\t" . $info["lastModified"] . "\t" . $info["white_time"] . "\t" . $info["black_time"] . "\n");
             }
         }
 //$updateuserquery = "INSERT INTO savedgames (FEN, gameMode, vsAI, difficultyAI) VALUES ('" . $fen . "', '" . $gamemode . "', '" . $vsai . "', '" . $difficultyai . "');";

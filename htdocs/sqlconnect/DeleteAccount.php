@@ -1,38 +1,40 @@
 <?php
 
-    $con = mysqli_connect('localhost','root','root','unityaccess');
+class AccountDeletion {
+    private $con;
 
-    // Check if the connection occurred successfully
-    if (mysqli_connect_errno()){
-        echo "1: Connection Failed";  // Error code 1 = connection failed
-        exit();
+    public function __construct(mysqli $con) {
+        $this->con = $con;
     }
-    
-    $username = $_POST["username"];
-    $password = $_POST["password"];
 
-    // Check if the username exists
-    $namecheckquery = "SELECT username, salt, hash, score FROM user WHERE username='" . $username . "';";
-    $namecheck = mysqli_query($con,$namecheckquery) or die("2"); // Error code 2 = name check query failed
+    public function deleteAccount($username, $password) {
+        // Check if the username exists
+        $namecheckquery = "SELECT username, salt, hash, score FROM user WHERE username='" . $username . "';";
+        $namecheck = mysqli_query($this->con, $namecheckquery) or die("2");
 
-    if (mysqli_num_rows($namecheck) != 1){
-        echo "5";  // error coode 5 - num of names matching != 1 : Either no user with name, or more than one
-        exit();
-    }
-    
-    // get login info from query
-    $existinginfo = mysqli_fetch_assoc($namecheck);
-    $salt = $existinginfo["salt"];
-    $hash = $existinginfo["hash"];
+        if (mysqli_num_rows($namecheck) != 1) {
+            return "5";  // error code 5 - num of names matching != 1 : Either no user with name, or more than one
+        }
 
-    $loginhash = crypt($password, $salt);
-    if ($hash != $loginhash){
-        echo "1"; // error code #6 password does not hash to match table
-        exit();
+        // get login info from query
+        $existinginfo = mysqli_fetch_assoc($namecheck);
+        $salt = $existinginfo["salt"];
+        $hash = $existinginfo["hash"];
+
+        $loginhash = crypt($password, $salt);
+        if ($hash != $loginhash) {
+            return "1"; // error code #6 password does not hash to match table
+        } else {
+            $deletequery = "DELETE FROM user WHERE username='" . $username . "';";
+            $delete = mysqli_query($this->con, $deletequery) or die("delete query failed");
+            return "0";
+        }
     }
-    else{
-        $deletequery = "DELETE FROM user WHERE username='". $username ."';";
-        $delete = mysqli_query($con,$deletequery) or die("delete query failed");
-        echo "0";
-    }
+}
+
+$con = mysqli_connect('localhost', 'root', 'root', 'unityaccess');
+$accountDeletion = new AccountDeletion($con);
+$result = $accountDeletion->deleteAccount($_POST["username"], $_POST["password"]);
+echo $result;
+
 ?>

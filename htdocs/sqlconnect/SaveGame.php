@@ -18,6 +18,8 @@
     $vsai = $_POST["vsai"];
     $difficultyai = $_POST["difficultyai"];
     $iswhite = $_POST["iswhite"];
+    $white_time = $_POST["white_time"];
+    $black_time = $_POST["black_time"];
 
     // Check if the username exists
     $namecheckquery = "SELECT userID FROM user WHERE username='" . $username . "';";
@@ -27,11 +29,11 @@
         $row = mysqli_fetch_assoc($namecheck);
         $userid = $row["userID"];
         if ($overrideGame == "TRUE"){
-            $overridesavedgamequery = "UPDATE savedgames SET FEN = '$fen', gameMode = '$gamemode', vsAI = '$vsai', difficultyAI = '$difficultyai', isWhite = '$iswhite' WHERE userID = $userid AND savedGameID = $savedgameid;";
+            $overridesavedgamequery = "UPDATE savedgames SET FEN = '$fen', gameMode = '$gamemode', vsAI = '$vsai', difficultyAI = '$difficultyai', isWhite = '$iswhite', white_time = '$white_time', black_time = '$black_time' WHERE userID = $userid AND savedGameID = $savedgameid;";
             mysqli_query($con,$overridesavedgamequery) or die(mysqli_error($con));
         }
         else{
-            $insertsavedgamequery = "INSERT INTO savedgames (userID, FEN, gameMode, vsAI, difficultyAI, isWhite) VALUES ('" . $userid . "', '" . $fen . "', '" . $gamemode . "', '" . $vsai . "', '" . $difficultyai . "', '" . $iswhite . "');";
+            $insertsavedgamequery = "INSERT INTO savedgames (userID, FEN, gameMode, vsAI, difficultyAI, isWhite, white_time, black_time) VALUES ('" . $userid . "', '" . $fen . "', '" . $gamemode . "', '" . $vsai . "', '" . $difficultyai . "', '" . $iswhite . "', '" . $white_time . "', '" . $black_time . "');";
             mysqli_query($con,$insertsavedgamequery) or die(mysqli_error($con));
         }
     }
